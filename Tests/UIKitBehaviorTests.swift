@@ -94,8 +94,7 @@ class UIKitBehaviorTests: XCTestCase {
         #endif
         textField.text = "Testing"
         // By default the font is nil
-        XCTAssertNotNil(textField.font)
-        XCTAssertEqual(textField.font?.pointSize, defaultTextViewFontSize)
+        XCTAssertNil(textField.font)
 
         textField.font = largeFont
         XCTAssertEqual(textField.font?.pointSize, 20)

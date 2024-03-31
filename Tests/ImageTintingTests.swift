@@ -12,11 +12,17 @@
     import UIKit
 #endif
 
-@testable import BonMot
+import SnapshotTesting
 import XCTest
+
+@testable import BonMot
 
 #if !os(watchOS)
 class ImageTintingTests: XCTestCase {
+
+    override func setUp() async throws {
+//        isRecording = true; #warning("Don't commit me!")
+    }
 
     func logoImage() throws -> BONImage {
         #if canImport(AppKit)
@@ -38,79 +44,66 @@ class ImageTintingTests: XCTestCase {
     let accessibilityDescription = "I’m the very model of a modern accessible image."
 
     func testImageTinting() throws {
-        #if SWIFT_PACKAGE && canImport(AppKit)
-        try XCTSkipIf(true, "Doesn't work on macOS SPM targets")
-        #endif
-
         let blackImageName = "rz-logo-black"
-        let redImageName = "rz-logo-red"
+        let testNameSuffix: String
 
         #if canImport(AppKit)
-            let sourceImage = try XCTUnwrap(testBundle.image(forResource: blackImageName))
-            let controlTintedImage = try XCTUnwrap(testBundle.image(forResource: redImageName))
+            let sourceImage = try XCTUnwrap(Bundle.module.image(forResource: blackImageName))
             let testTintedImage = sourceImage.tintedImage(color: raizlabsRed)
+            testNameSuffix = "AppKit"
         #elseif canImport(UIKit)
             let sourceImage = try XCTUnwrap(UIImage(named: blackImageName, in: testBundle, compatibleWith: nil))
-            let controlTintedImage = try XCTUnwrap(UIImage(named: redImageName, in: testBundle, compatibleWith: nil))
             let testTintedImage = sourceImage.tintedImage(color: raizlabsRed)
+            testNameSuffix = "UIKit"
         #endif
 
-        BONAssertEqualImages(controlTintedImage, testTintedImage)
+        assertSnapshot(of: testTintedImage, as: .image, testName: #function + "_" + testNameSuffix)
     }
 
     func testTintingInAttributedString() throws {
-        #if os(iOS) || os(tvOS)
-        try XCTSkipIf(true, "No longer working for iOS/tvOS targets")
-        #endif
-
         let imageForTest = try logoImage()
 
-        let untintedString = NSAttributedString.composed(of: [
-            imageForTest.styled(with: .color(raizlabsRed)),
-            ])
+        let testNameSuffix: String
 
         #if canImport(AppKit)
             let tintableImage = imageForTest
             tintableImage.isTemplate = true
+            testNameSuffix = "AppKit"
         #elseif canImport(UIKit)
             let tintableImage = imageForTest.withRenderingMode(.alwaysTemplate)
+            testNameSuffix = "UIKit"
         #endif
 
         let tintedString = NSAttributedString.composed(of: [
             tintableImage.styled(with: .color(raizlabsRed)),
             ])
 
-        let untintedResult = untintedString.snapshotForTesting()
-        let tintedResult = tintedString.snapshotForTesting()
+        let tintedResult = try tintedString.snapshotForTesting()
 
-        XCTAssertNotNil(untintedResult)
-        XCTAssertNotNil(tintedResult)
-
-        BONAssertNotEqualImages(untintedResult!, tintedResult!)
+        assertSnapshot(of: tintedResult, as: .image, testName: #function + "_" + testNameSuffix)
     }
 
     func testNotTintingInAttributedString() throws {
-        #if os(iOS) || os(tvOS)
-        try XCTSkipIf(true, "No longer working for iOS/tvOS targets")
+        var imageForTest = try logoImage()
+
+        let testNameSuffix: String
+
+        #if canImport(AppKit)
+        imageForTest.isTemplate = false
+            testNameSuffix = "AppKit"
+        #elseif canImport(UIKit)
+        imageForTest = imageForTest.withRenderingMode(.alwaysOriginal)
+            testNameSuffix = "UIKit"
         #endif
 
-        let imageForTest = try logoImage()
 
-        let untintedString = NSAttributedString.composed(of: [
-            imageForTest,
-            ])
-
-        let tintAttemptString = NSAttributedString.composed(of: [
+        let tintString = NSAttributedString.composed(of: [
             imageForTest.styled(with: .color(raizlabsRed)),
             ])
 
-        let untintedResult = untintedString.snapshotForTesting()
-        let tintAttemptResult = tintAttemptString.snapshotForTesting()
+        let tintResult = try tintString.snapshotForTesting()
 
-        XCTAssertNotNil(untintedResult)
-        XCTAssertNotNil(tintAttemptResult)
-
-        BONAssertEqualImages(untintedResult!, tintAttemptResult!)
+        assertSnapshot(of: tintResult, as: .image, testName: #function + "_" + testNameSuffix)
     }
 
     func testAccessibilityIOSAndTVOS() throws {

@@ -16,6 +16,9 @@ let package = Package(
             name: "BonMot",
             targets: ["BonMot"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.0.0"),
+    ],
     targets: [
         .target(
             name: "BonMot",
@@ -25,12 +28,18 @@ let package = Package(
         ),
         .testTarget(
             name: "BonMotTests",
-            dependencies: ["BonMot"],
+            dependencies: [
+                "BonMot",
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+            ],
             path: "Tests",
-            exclude: [],
+            exclude: [
+                "__Snapshots__",
+            ],
             resources: [
                 .process("Resources"),
-        ]),
+            ]
+        ),
     ],
     swiftLanguageVersions: [.v5]
 )

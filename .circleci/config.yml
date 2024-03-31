@@ -17,23 +17,41 @@ jobs:
       - setup
       - lint-pod
 
+# Docs for store_test_results: https://circleci.com/docs/configuration-reference/#storetestresults
+
   tests-xcode-14:
     executor: xcode-14
     steps:
       - setup
       - run: make test_macos
+      - store_test_results:
+          path: test-results-macos
       - run: make test_ios
+      - store_test_results:
+          path: test-results-ios
       - run: make test_tvos
+      - store_test_results:
+          path: test-results-tvos
       - run: make test_watchos
+      - store_test_results:
+          path: test-results-watchos
 
   tests-xcode-15:
     executor: xcode-15
     steps:
       - setup
       - run: make test_macos
+      - store_test_results:
+          path: test-results-macos
       - run: make test_ios
+      - store_test_results:
+          path: test-results-ios
       - run: make test_tvos
+      - store_test_results:
+          path: test-results-tvos
       - run: make test_watchos
+      - store_test_results:
+          path: test-results-watchos
 
   deploy-to-cocoapods:
     executor: xcode-14

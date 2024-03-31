@@ -8,8 +8,11 @@ jobs:
     executor: xcode-14
     steps:
       - setup
+      - run: mkdir test-results-swift
       - run: swift build
       - run: swift test
+      - store_test_results:
+          path: test-results-swift
 
   lint-pod:
     executor: xcode-14
@@ -23,15 +26,20 @@ jobs:
     executor: xcode-14
     steps:
       - setup
+      - run: mkdir test-results-macos
       - run: make test_macos
+      - run: mkdir test-results-macos
       - store_test_results:
           path: test-results-macos
+      - run: mkdir test-results-ios
       - run: make test_ios
       - store_test_results:
           path: test-results-ios
+      - run: mkdir test-results-tvos
       - run: make test_tvos
       - store_test_results:
           path: test-results-tvos
+      - run: mkdir test-results-watchos
       - run: make test_watchos
       - store_test_results:
           path: test-results-watchos
@@ -40,21 +48,26 @@ jobs:
     executor: xcode-15
     steps:
       - setup
+      - run: mkdir test-results-macos
       - run: make test_macos
+      - run: mkdir test-results-macos
       - store_test_results:
           path: test-results-macos
+      - run: mkdir test-results-ios
       - run: make test_ios
       - store_test_results:
           path: test-results-ios
+      - run: mkdir test-results-tvos
       - run: make test_tvos
       - store_test_results:
           path: test-results-tvos
+      - run: mkdir test-results-watchos
       - run: make test_watchos
       - store_test_results:
           path: test-results-watchos
 
   deploy-to-cocoapods:
-    executor: xcode-14
+    executor: xcode-15
     steps:
       - setup
       - run: bundle exec pod trunk push

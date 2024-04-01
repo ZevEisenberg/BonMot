@@ -221,7 +221,7 @@ extension NSAttributedString {
         }
         return image
         #elseif canImport(UIKit)
-        let format = UIGraphicsImageRendererFormat(for: UITraitCollection(displayScale: 2))
+        let format = UIGraphicsImageRendererFormat(for: UITraitCollection(displayScale: 1))
         return UIGraphicsImageRenderer(size: boundingRect.size, format: format).image { _ in
             self.draw(with: boundingRect, options: .usesLineFragmentOrigin, context: nil)
         }

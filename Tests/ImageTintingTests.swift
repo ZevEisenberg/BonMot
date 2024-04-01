@@ -57,7 +57,7 @@ class ImageTintingTests: XCTestCase {
             testNameSuffix = "UIKit"
         #endif
 
-        assertSnapshot(of: testTintedImage, as: .image, testName: #function + "_" + testNameSuffix)
+        assertSnapshot(of: try testTintedImage.snapshotForTesting(), as: .image, testName: #function + "_" + testNameSuffix)
     }
 
     func testTintingInAttributedString() throws {
@@ -78,9 +78,9 @@ class ImageTintingTests: XCTestCase {
             tintableImage.styled(with: .color(raizlabsRed)),
             ])
 
-        let tintedResult = try tintedString.snapshotForTesting()
+        let tintResult = try tintedString.snapshotForTesting()
 
-        assertSnapshot(of: tintedResult, as: .image, testName: #function + "_" + testNameSuffix)
+        assertSnapshot(of: try tintResult.snapshotForTesting(), as: .image, testName: #function + "_" + testNameSuffix)
     }
 
     func testNotTintingInAttributedString() throws {
@@ -103,7 +103,7 @@ class ImageTintingTests: XCTestCase {
 
         let tintResult = try tintString.snapshotForTesting()
 
-        assertSnapshot(of: tintResult, as: .image, testName: #function + "_" + testNameSuffix)
+        assertSnapshot(of: try tintResult.snapshotForTesting(), as: .image, testName: #function + "_" + testNameSuffix)
     }
 
     func testAccessibilityIOSAndTVOS() throws {
@@ -129,3 +129,23 @@ class ImageTintingTests: XCTestCase {
     #endif
 }
 #endif
+
+extension BONImage {
+    func snapshotForTesting() throws -> BONImage {
+#if canImport(AppKit)
+        let renderedCGImage = try XCTUnwrap(
+            self.cgImage(
+                forProposedRect: nil,
+                context: nil,
+                hints: [
+                    // The image will use the DPI of the display of the machine it is running on. That's 144dpi for Retina, 72dpi for non-Retina, and it could potentially be other values as well. Force to 72dpi non-Retina for testing.
+                    .init(rawValue: NSDeviceDescriptionKey.resolution.rawValue): CGSize(width: 72, height: 72),
+                ]
+            )
+        )
+        return NSImage(cgImage: renderedCGImage, size: size)
+#else
+        return self
+#endif
+    }
+}

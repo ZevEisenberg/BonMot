@@ -202,6 +202,7 @@ extension NSAttributedString {
         return attributesByRange
     }
 
+    #if !os(watchOS)
     func snapshotForTesting() throws -> BONImage {
         let bigSize = CGSize(width: 10_000, height: 10_000)
 
@@ -227,5 +228,6 @@ extension NSAttributedString {
         }
         #endif
     }
+    #endif
 
 }

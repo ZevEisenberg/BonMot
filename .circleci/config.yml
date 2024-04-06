@@ -28,7 +28,6 @@ jobs:
       - setup
       - run: mkdir test-results-macos
       - run: make test_macos
-      - run: mkdir test-results-macos
       - store_test_results:
           path: test-results-macos
       - run: mkdir test-results-ios
@@ -98,7 +97,6 @@ commands:
     steps:
       - checkout
       - switch-ruby
-      - run: brew install xcbeautify
 
   switch-ruby:
     description: "Switch Ruby"

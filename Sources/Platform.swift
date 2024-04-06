@@ -6,7 +6,7 @@
 //  Copyright © 2016 Rightpoint. All rights reserved.
 //
 
-#if os(OSX)
+#if canImport(AppKit)
     import AppKit
     public typealias BONColor = NSColor
     public typealias BONImage = NSImage
@@ -18,7 +18,7 @@
     let BONFontDescriptorFeatureSettingsAttribute = NSFontDescriptor.AttributeName.featureSettings
     let BONFontFeatureTypeIdentifierKey = NSFontDescriptor.FeatureKey.typeIdentifier
     let BONFontFeatureSelectorIdentifierKey = NSFontDescriptor.FeatureKey.selectorIdentifier
-#else
+#elseif canImport(UIKit)
     import UIKit
     public typealias BONColor = UIColor
     public typealias BONImage = UIImage

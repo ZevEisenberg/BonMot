@@ -1,16 +1,14 @@
 <img width=443 src="Resources/readme-images/BonMot-logo.png" alt="BonMot Logo" />
 
-[![Swift 5.0](https://img.shields.io/badge/Swift-%205.0-orange.svg?style=flat)](https://swift.org)
+[![Swift 5.9](https://img.shields.io/badge/Swift-%205.9-orange.svg?style=flat)](https://swift.org)
 [![CircleCI](https://img.shields.io/circleci/project/github/Rightpoint/BonMot/master.svg)](https://circleci.com/gh/Rightpoint/BonMot)
 [![Version](https://img.shields.io/cocoapods/v/BonMot.svg?style=flat)](http://cocoapods.org/pods/BonMot)
 [![License](https://img.shields.io/cocoapods/l/BonMot.svg?style=flat)](http://cocoapods.org/pods/BonMot)
 [![Platform](https://img.shields.io/cocoapods/p/BonMot.svg?style=flat)](http://cocoapods.org/pods/BonMot)
-[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage) [![Swift Package Manager compatible](https://img.shields.io/badge/Swift_Package_Manager-compatible-orange?style=flat)](https://swift.org/package-manager/)
-[![codecov](https://codecov.io/gh/Rightpoint/BonMot/branch/master/graph/badge.svg)](https://codecov.io/gh/Rightpoint/BonMot)
 
 BonMot (pronounced *Bon Mo*, French for *good word*) is a Swift attributed string library. It abstracts away the complexities of the iOS, macOS, tvOS, and watchOS typography tools, freeing you to focus on making your text beautiful.
 
-To run the example project, run `pod try BonMot`, or clone the repo, open `BonMot.xcodeproj`, and run the **Example-iOS** target.
+To run the example project, run `pod try BonMot`, or clone the repo, open `Example/BonMot.xcodeproj`, and run the **Example-iOS** target.
 
 ### AttributedString
 
@@ -367,14 +365,6 @@ it, simply add the following line to your Podfile:
 
 ```ruby
 pod 'BonMot'
-```
-
-## Carthage
-
-BonMot is also compatible with [Carthage](https://github.com/Carthage/Carthage). To install it, simply add the following line to your Cartfile:
-
-```ogdl
-github "Rightpoint/BonMot"
 ```
 
 # Contributing

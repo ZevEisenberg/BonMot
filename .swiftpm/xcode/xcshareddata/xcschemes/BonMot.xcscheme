@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1250"
+   LastUpgradeVersion = "1510"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,24 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ABCBFD561D96E61000FAD37A"
-               BuildableName = "BonMot.framework"
-               BlueprintName = "BonMot-iOS"
-               ReferencedContainer = "container:BonMot.xcodeproj">
+               BlueprintIdentifier = "BonMot"
+               BuildableName = "BonMot"
+               BlueprintName = "BonMot"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BonMotTests"
+               BuildableName = "BonMotTests"
+               BlueprintName = "BonMotTests"
+               ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -27,33 +41,16 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
-      codeCoverageEnabled = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "ABCBFD561D96E61000FAD37A"
-            BuildableName = "BonMot.framework"
-            BlueprintName = "BonMot-iOS"
-            ReferencedContainer = "container:BonMot.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
-      <TestPlans>
-         <TestPlanReference
-            reference = "container:Tests/BonMot-iOSTests.xctestplan"
-            default = "YES">
-         </TestPlanReference>
-      </TestPlans>
+      shouldAutocreateTestPlan = "YES">
       <Testables>
          <TestableReference
-            skipped = "NO"
-            parallelizable = "YES"
-            testExecutionOrdering = "random">
+            skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "ABCBFD5E1D96E61100FAD37A"
-               BuildableName = "BonMot-iOSTests.xctest"
-               BlueprintName = "BonMot-iOSTests"
-               ReferencedContainer = "container:BonMot.xcodeproj">
+               BlueprintIdentifier = "BonMotTests"
+               BuildableName = "BonMotTests"
+               BlueprintName = "BonMotTests"
+               ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -68,15 +65,6 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "ABCBFD561D96E61000FAD37A"
-            BuildableName = "BonMot.framework"
-            BlueprintName = "BonMot-iOS"
-            ReferencedContainer = "container:BonMot.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -87,10 +75,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "ABCBFD561D96E61000FAD37A"
-            BuildableName = "BonMot.framework"
-            BlueprintName = "BonMot-iOS"
-            ReferencedContainer = "container:BonMot.xcodeproj">
+            BlueprintIdentifier = "BonMot"
+            BuildableName = "BonMot"
+            BlueprintName = "BonMot"
+            ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

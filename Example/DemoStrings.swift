@@ -445,7 +445,7 @@ extension DemoStrings {
     /// - Parameter theIdentifier: The identifier of the storyboard in question.
     /// - Returns: A string style that contains the extra storyboard attribute.
     static func customStoryboard(identifier theIdentifier: String) -> StringStyle {
-        return StringStyle(.extraAttributes(["Storyboard": theIdentifier]))
+        return StringStyle(.extraAttributes([NSAttributedString.Key("Storyboard"): theIdentifier]))
     }
 
 }

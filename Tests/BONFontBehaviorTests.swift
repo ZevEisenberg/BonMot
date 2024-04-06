@@ -31,9 +31,9 @@ class BONFontBehaviorTests: XCTestCase {
                 BONFontFeatureSelectorIdentifierKey: 1,
             ],
         ]
-        #if os(OSX)
+        #if canImport(AppKit)
             let newAttributes = BONFont(descriptor: BONFontDescriptor(fontAttributes: attributes), size: 0)?.fontDescriptor.fontAttributes ?? [:]
-        #else
+        #elseif canImport(UIKit)
             let newAttributes = BONFont(descriptor: BONFontDescriptor(fontAttributes: attributes), size: 0).fontDescriptor.fontAttributes
         #endif
         XCTAssertEqual(newAttributes.count, 2)
@@ -70,7 +70,9 @@ class BONFontBehaviorTests: XCTestCase {
         else {
             XCTAssertEqual(newAttributes.count, 2)
         }
+        #if !os(watchOS)
         XCTAssertEqual(newAttributes["NSCTFontUIUsageAttribute"] as? BonMotTextStyle, testTextStyle)
+        #endif
         XCTAssertEqual(newAttributes["NSFontSizeAttribute"] as? Int, 10)
     }
     #endif

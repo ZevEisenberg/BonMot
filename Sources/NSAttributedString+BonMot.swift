@@ -6,9 +6,9 @@
 //  Copyright © 2016 Rightpoint. All rights reserved.
 //
 
-#if os(OSX)
+#if canImport(AppKit)
     import AppKit
-#else
+#elseif canImport(UIKit)
     import UIKit
 #endif
 

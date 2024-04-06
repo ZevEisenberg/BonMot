@@ -6,8 +6,7 @@
 //  Copyright © 2016 Rightpoint. All rights reserved.
 //
 
-// This is not supported on watchOS
-#if os(iOS) || os(tvOS) || os(OSX)
+#if !os(watchOS)
     import CoreText
     import Foundation
 

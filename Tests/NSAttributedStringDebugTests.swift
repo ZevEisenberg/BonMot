@@ -14,8 +14,10 @@ class NSAttributedStringDebugTests: XCTestCase {
     func robotImage() throws -> BONImage {
         #if os(OSX)
         let imageForTest = testBundle.image(forResource: "robot")
-        #else
+        #elseif os(iOS) || os(tvOS)
         let imageForTest = UIImage(named: "robot", in: testBundle, compatibleWith: nil)
+        #else
+        let imageForTest = UIImage(named: "robot", in: testBundle, with: nil)
         #endif
         return try XCTUnwrap(imageForTest)
     }
@@ -50,6 +52,7 @@ class NSAttributedStringDebugTests: XCTestCase {
         }
     }
 
+    #if !os(watchOS)
     func testComposedDebugRepresentation() throws {
         let imageForTest = try robotImage()
 
@@ -67,6 +70,7 @@ class NSAttributedStringDebugTests: XCTestCase {
             XCTAssertEqual(testCase.1, debugString, line: testCase.2)
         }
     }
+    #endif
 
     func testThatNSAttributedStringSpeaksUTF16() {
         // We don't actually need to test this - just demonstrating how it works

@@ -7,11 +7,9 @@
 //
 
 @testable import BonMot
-#if canImport(UIKit)
+#if canImport(UIKit) && (os(iOS) || os(tvOS))
 import UIKit
 import XCTest
-
-#if os(iOS)
 
 @available(iOS 10.0, *)
 let defaultTraitCollection = UITraitCollection(preferredContentSizeCategory: UIContentSizeCategory.large)
@@ -332,5 +330,4 @@ class AdaptiveStyleTests: XCTestCase {
 
 }
 
-#endif
 #endif

@@ -149,28 +149,75 @@ class XMLTagStyleBuilderTests: XCTestCase {
 
     /// Test the line and column information returned in the error. Note that this is just testing our adapting of the column for the root node insertion.
     func testErrorLocation() {
-        func errorLocation(forXML xml: String, _ options: XMLParsingOptions = []) -> (line: Int, column: Int) {
+        struct ParseErrorResult: Equatable {
+            let originalXML: String
+            let errorCode: XMLParser.ErrorCode?
+            let line: Int?
+            let column: Int?
+        }
+
+        func errorResult(forXML xml: String, options: XMLParsingOptions = []) -> ParseErrorResult? {
             do {
-                let attributedString = try NSAttributedString.composed(ofXML: xml)
+                let attributedString = try NSAttributedString.composed(ofXML: xml, options: options)
                 XCTFail("compose should of thrown, got \(attributedString)")
             }
             catch let error as XMLBuilderError {
-                return (error.line, error.column)
+                return ParseErrorResult(
+                    originalXML: error.originalXML,
+                    errorCode: error.errorCode,
+                    line: error.line,
+                    column: error.column
+                )
             }
             catch {
                 XCTFail("Did not get an XMLError")
             }
-            return (0, 0)
+            return nil
         }
-        XCTAssertEqual(errorLocation(forXML: "Text <a ").line, 1)
-        XCTAssertEqual(errorLocation(forXML: "Text <a ").column, 7)
-        XCTAssertEqual(errorLocation(forXML: "Text \r\n <a ").line, 2)
-        XCTAssertEqual(errorLocation(forXML: "Text \r\n <a ").column, 3)
 
-        XCTAssertEqual(errorLocation(forXML: "<ex> <a ", [.doNotWrapXML]).line, 1)
-        XCTAssertEqual(errorLocation(forXML: "<ex> <a ", [.doNotWrapXML]).column, 7)
-        XCTAssertEqual(errorLocation(forXML: "<ex> \r\n <a ", [.doNotWrapXML]).line, 2)
-        XCTAssertEqual(errorLocation(forXML: "<ex> \r\n <a ", [.doNotWrapXML]).column, 3)
+        // n.b. when debugging this, the error code will give an unhelpful generic name in failure messages and when using `po` in the debugger. Use `p` in the debugger for a human-readable name.
+
+        // n.b. failure messages here are pretty hard to interpret. Consider adding https://github.com/pointfreeco/swift-custom-dump and using XCTAssertNoDifference when debugging. I opted not to commit that because I did not want to introduce a dependency.
+
+        XCTAssertEqual(
+            errorResult(forXML: "Text <a "),
+            ParseErrorResult(
+                originalXML: "<BonMotTopLevelContainer>Text <a </BonMotTopLevelContainer>",
+                errorCode: .nameRequiredError,
+                line: 1,
+                column: 34
+            )
+        )
+
+        XCTAssertEqual(
+            errorResult(forXML: "Text \r\n <a "),
+            ParseErrorResult(
+                originalXML: "<BonMotTopLevelContainer>Text \r\n <a </BonMotTopLevelContainer>",
+                errorCode: .nameRequiredError,
+                line: 2,
+                column: 5
+            )
+        )
+
+        XCTAssertEqual(
+            errorResult(forXML: "<ex> <a ", options: .doNotWrapXML),
+            ParseErrorResult(
+                originalXML: "<ex> <a ",
+                errorCode: .gtRequiredError,
+                line: 1,
+                column: 9
+            )
+        )
+
+        XCTAssertEqual(
+            errorResult(forXML: "<ex> \r\n <a ", options: .doNotWrapXML),
+            ParseErrorResult(
+                originalXML: "<ex> \r\n <a ",
+                errorCode: .gtRequiredError,
+                line: 2,
+                column: 5
+            )
+        )
     }
 
     func testBONXML() {

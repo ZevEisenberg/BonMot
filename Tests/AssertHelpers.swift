@@ -9,15 +9,16 @@
 import BonMot
 import XCTest
 
-func dataFromImage(image theImage: BONImage) -> Data {
-    assert(theImage.size != .zero)
-    #if os(OSX)
-        let cgImageRef = theImage.cgImage(forProposedRect: nil, context: nil, hints: nil)
-        let bitmapImageRep = NSBitmapImageRep(cgImage: cgImageRef!)
-        let pngData = bitmapImageRep.representation(using: .png, properties: [:])!
-        return pngData
-    #else
-        return theImage.pngData()!
+func dataFromImage(_ image: BONImage) throws -> Data {
+    assert(image.size != .zero)
+    // https://stackoverflow.com/a/26802188/255489
+    #if canImport(AppKit)
+    let tiffRepresentation = try XCTUnwrap(image.tiffRepresentation)
+    let imageRep = try XCTUnwrap(NSBitmapImageRep(data: tiffRepresentation))
+    let data = try XCTUnwrap(imageRep.representation(using: .png, properties: [:]))
+    return data
+    #elseif canImport(UIKit)
+    return image.pngData()!
     #endif
 }
 
@@ -77,18 +78,6 @@ func BONAssert<T>(attributes dictionary: StyleAttributes?, query: (NSParagraphSt
     }
     let actualValue = query(paragraphStyle)
     XCTAssertEqual(value, actualValue, file: file, line: line)
-}
-
-func BONAssertEqualImages(_ image1: BONImage, _ image2: BONImage, file: StaticString = #filePath, line: UInt = #line) {
-    let data1 = dataFromImage(image: image1)
-    let data2 = dataFromImage(image: image2)
-    XCTAssertEqual(data1, data2, file: file, line: line)
-}
-
-func BONAssertNotEqualImages(_ image1: BONImage, _ image2: BONImage, file: StaticString = #filePath, line: UInt = #line) {
-    let data1 = dataFromImage(image: image1)
-    let data2 = dataFromImage(image: image2)
-    XCTAssertNotEqual(data1, data2, file: file, line: line)
 }
 
 func BONAssertEqualFonts(_ font1: BONFont, _ font2: BONFont, _ message: @autoclosure () -> String = "", file: StaticString = #filePath, line: UInt = #line) {

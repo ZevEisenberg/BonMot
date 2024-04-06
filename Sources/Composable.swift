@@ -6,14 +6,14 @@
 //  Copyright © 2016 Rightpoint. All rights reserved.
 //
 
-#if os(OSX)
+#if canImport(AppKit)
     import AppKit
-#else
+#elseif canImport(UIKit)
     import UIKit
 #endif
 
 /// Describes types which know how to append themselves to an attributed string.
-/// Used to provide a flexible, extensible chaning API for BonMot.
+/// Used to provide a flexible, extensible chaining API for BonMot.
 public protocol Composable {
 
     /// Append the receiver to a given attributed string. It is up to the
@@ -210,7 +210,7 @@ extension String: Composable {
 
 }
 
-#if os(iOS) || os(tvOS) || os(OSX)
+#if !os(watchOS)
 extension BONImage: Composable {
 
     /// Append the receiver to `attributedString`, with `baseStyle` applied as
@@ -231,7 +231,7 @@ extension BONImage: Composable {
         let baselinesOffsetForAttachment = baseStyle.baselineOffset ?? 0
         let attachment = NSTextAttachment()
 
-        #if os(OSX)
+        #if canImport(AppKit)
             let imageIsTemplate = isTemplate
         #else
             let imageIsTemplate = (renderingMode != .alwaysOriginal)

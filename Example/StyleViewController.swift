@@ -52,13 +52,13 @@ class StyleViewController: UITableViewController {
         }
         let attributedText = styles[indexPath.section].1[indexPath.row]
         cell.titleLabel?.attributedText = attributedText.adapted(to: traitCollection)
-        cell.accessoryType = attributedText.attribute("Storyboard", at: 0, effectiveRange: nil) == nil ? .none : .disclosureIndicator
+        cell.accessoryType = attributedText.attribute(NSAttributedString.Key("Storyboard"), at: 0, effectiveRange: nil) == nil ? .none : .disclosureIndicator
         return cell
     }
 
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         let attributedText = styles[indexPath.section].1[indexPath.row]
-        if attributedText.attribute("Storyboard", at: 0, effectiveRange: nil) is String {
+        if attributedText.attribute(NSAttributedString.Key("Storyboard"), at: 0, effectiveRange: nil) is String {
             return true
         }
         return false
@@ -66,7 +66,7 @@ class StyleViewController: UITableViewController {
 
     func selectRow(at indexPath: IndexPath) {
         let attributedText = styles[indexPath.section].1[indexPath.row]
-        if let storyboardIdentifier = attributedText.attribute("Storyboard", at: 0, effectiveRange: nil) as? String {
+        if let storyboardIdentifier = attributedText.attribute(NSAttributedString.Key("Storyboard"), at: 0, effectiveRange: nil) as? String {
             guard let nextVC = storyboard?.instantiateViewController(withIdentifier: storyboardIdentifier) else {
                 fatalError("No Storyboard identifier \(storyboardIdentifier)")
             }

@@ -13,7 +13,6 @@ statement_position:
   statement_mode: uncuddled_else
 
 opt_in_rules:
-  - anyobject_protocol
   - identical_operands
   - implicit_return
   - last_where

@@ -14,6 +14,7 @@
     import UIKit
 #endif
 
+@MainActor
 private var TextAlignmentConstraintKVOContext = "BonMotTextAlignmentConstraintKVOContext" as NSString
 
 /// Used to align various UI controls (anything with a font or attribute text)
@@ -24,7 +25,7 @@ private var TextAlignmentConstraintKVOContext = "BonMotTextAlignmentConstraintKV
 public class TextAlignmentConstraint: NSLayoutConstraint {
 
     @objc(BONTextAlignmentConstraintAttribute)
-    public enum TextAttribute: Int, CustomStringConvertible {
+    public enum TextAttribute: Int, CustomStringConvertible, Sendable {
 
         case unspecified
         case top

@@ -12,7 +12,7 @@
     import UIKit
 #endif
 
-public struct Emphasis: OptionSet {
+public struct Emphasis: OptionSet, Sendable {
 
     public var rawValue: Int
 

@@ -17,7 +17,7 @@ public class NamedStyles: NSObject {
     /// A shared repository of styles. It is used by the `bonMotStyleName`
     /// property in Interface Builder. This singleton is pre-populated with 3
     /// values for Dynamic Type: "control", "body", and "preferred".
-    public static var shared: NamedStyles = {
+    public static let shared: NamedStyles = {
         let control = StringStyle(
             .adapt(.control))
         let style = NamedStyles(styles: [
@@ -30,7 +30,7 @@ public class NamedStyles: NSObject {
     #else
     /// A shared repository of styles. It is used by the `bonMotStyleName`
     /// property in Interface Builder.
-    public static var shared = NamedStyles()
+    public static let shared = NamedStyles()
     #endif
 
     /// Define a closure to be invoked when an unregistered style is requested.

@@ -19,8 +19,9 @@ let defaultTextViewFontSize: CGFloat = 38
 #if canImport(UIKit)
 import UIKit
 
-class UIKitBehaviorTests: XCTestCase {
+final class UIKitBehaviorTests: XCTestCase {
 
+    @MainActor
     func testLabelPropertyBehavior() {
         let largeFont = UIFont(name: "Avenir-Roman", size: 20)
         let smallFont = UIFont(name: "Avenir-Roman", size: 10)
@@ -57,6 +58,7 @@ class UIKitBehaviorTests: XCTestCase {
         }
     }
 
+    @MainActor
     func testTextFieldFontPropertyBehavior() {
         let largeFont = UIFont(name: "Avenir-Roman", size: 20)
         let textField = UITextField()
@@ -72,9 +74,7 @@ class UIKitBehaviorTests: XCTestCase {
         XCTAssertEqual(textField.font?.pointSize, 20)
 
         // This test breaks on tvOS 11 as of beta 4: http://www.openradar.me/33742507
-        if #available(tvOS 11.0, *) {
-        }
-        else {
+        if #unavailable(tvOS 11.0) {
             textField.font = nil
             // Note that font has a default value even though it's optional.
             XCTAssertNotNil(textField.font)
@@ -82,6 +82,7 @@ class UIKitBehaviorTests: XCTestCase {
         }
     }
 
+    @MainActor
     func testTextViewFontPropertyBehavior() {
         let largeFont = UIFont(name: "Avenir-Roman", size: 20)
         let textField = UITextView()
@@ -105,6 +106,7 @@ class UIKitBehaviorTests: XCTestCase {
         XCTAssertNil(textField.font)
     }
 
+    @MainActor
     func testButtonFontPropertyBehavior() {
         let button = UIButton()
 
@@ -114,6 +116,7 @@ class UIKitBehaviorTests: XCTestCase {
     }
 
     // Check to see if arbitrary text survives re-configuration (spoiler: it doesn't).
+    @MainActor
     func testLabelAttributedStringAttributePreservationBehavior() {
         let label = UILabel()
         label.attributedText = NSAttributedString(string: "", attributes: ["TestAttribute": true])

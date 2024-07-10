@@ -39,7 +39,7 @@ internal enum EmbeddedTransformationHelpers {
 
     }
 
-    static var embeddedTransformationTypes: [EmbeddedTransformation.Type] = [AdaptiveStyle.self, Tracking.self, Tab.self]
+    static let embeddedTransformationTypes: [EmbeddedTransformation.Type] = [AdaptiveStyle.self, Tracking.self, Tab.self]
 
     static func embed(transformation theTransformation: EmbeddedTransformation, to styleAttributes: StyleAttributes) -> StyleAttributes {
         let dictionary = theTransformation.asDictionary

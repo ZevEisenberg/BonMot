@@ -655,7 +655,6 @@ class StringStyleTests: XCTestCase {
 
     static let floatingPointPropertiesLine = #line
     static let floatingPointProperties: [(NSParagraphStyle) -> CGFloat] = [
-        // swiftlint:disable opening_brace
         \.lineSpacing,
         \.paragraphSpacing,
         \.headIndent,
@@ -666,7 +665,6 @@ class StringStyleTests: XCTestCase {
         \.lineHeightMultiple,
         \.paragraphSpacingBefore,
         { CGFloat($0.hyphenationFactor) },
-        // swiftlint:enable opening_brace
     ]
 
     func testParagraphStyles() {

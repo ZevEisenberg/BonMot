@@ -127,6 +127,9 @@ commands:
     description: "Restore Ruby Gems"
     steps:
       - run:
+          name: Check ruby versions
+          command: rbenv versions
+      - run:
           name: Set Ruby Version
           command: echo "ruby-2.7" > ~/.ruby-version
       - restore_cache:

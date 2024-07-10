@@ -73,6 +73,12 @@ jobs:
       - setup
       - run: bundle exec fastlane test_all
 
+  fastlane-tests-xcode-16:
+    executor: xcode-16
+    steps:
+      - setup
+      - run: bundle exec fastlane test_all
+
   carthage-build:
     executor: xcode-15
     steps:
@@ -96,6 +102,14 @@ executors:
   xcode-15:
     macos:
       xcode: "15.4.0"
+    environment:
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+      HOMEBREW_NO_AUTO_UPDATE: 1
+    shell: /bin/bash --login -eo pipefail
+  xcode-16:
+    macos:
+      xcode: "16.0.0"
     environment:
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
@@ -148,7 +162,7 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - fastlane-tests-xcode-13:
+      - fastlane-tests-xcode-16:
           filters:
             tags:
               only: /.*/
@@ -166,7 +180,7 @@ workflows:
             - danger
             - swift-package
             - fastlane-tests
-            - fastlane-tests-xcode-13
+            - fastlane-tests-xcode-16
             - lint-pod
             - carthage-build
           filters:

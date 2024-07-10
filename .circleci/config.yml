@@ -2,7 +2,7 @@ version: 2.1
 
 jobs:
   danger:
-    executor: xcode-12
+    executor: xcode-15
     steps:
       - setup
       - run:
@@ -55,32 +55,26 @@ jobs:
           command: bash <(curl -s https://codecov.io/bash) -f build/BonMot-iOS/slather/cobertura.xml -X coveragepy -X gcov -X xcode
 
   swift-package:
-    executor: xcode-12
+    executor: xcode-15
     steps:
       - setup
       - run: swift build
       - run: swift test
 
   lint-pod:
-    executor: xcode-12
+    executor: xcode-15
     steps:
       - setup
       - lint-pod
 
   fastlane-tests:
-    executor: xcode-12
-    steps:
-      - setup
-      - run: bundle exec fastlane test_all
-
-  fastlane-tests-xcode-13:
-    executor: xcode-13
+    executor: xcode-15
     steps:
       - setup
       - run: bundle exec fastlane test_all
 
   carthage-build:
-    executor: xcode-12
+    executor: xcode-15
     steps:
       - checkout
       - run:
@@ -93,23 +87,15 @@ jobs:
       # - run: carthage build --no-skip-current && for platform in Mac iOS tvOS watchOS; do test -d Carthage/Build/${platform}/BonMot.framework || exit 1; done
 
   deploy-to-cocoapods:
-    executor: xcode-12
+    executor: xcode-15
     steps:
       - setup
       - run: bundle exec pod trunk push
 
 executors:
-  xcode-12:
+  xcode-15:
     macos:
-      xcode: "12.5.1"
-    environment:
-      LC_ALL: en_US.UTF-8
-      LANG: en_US.UTF-8
-      HOMEBREW_NO_AUTO_UPDATE: 1
-    shell: /bin/bash --login -eo pipefail
-  xcode-13:
-    macos:
-      xcode: "13.0.0"
+      xcode: "15.4.0"
     environment:
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
@@ -128,7 +114,7 @@ commands:
     steps:
       - run:
           name: Set Ruby Version
-          command:  echo "ruby-2.5" > ~/.ruby-version
+          command: echo "ruby-2.5" > ~/.ruby-version
       - restore_cache:
           key: 1-gems-{{ checksum "Gemfile.lock" }}
       - run: bundle check || bundle install --path vendor/bundle

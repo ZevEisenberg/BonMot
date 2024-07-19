@@ -124,10 +124,10 @@ workflows:
   version: 2
   build-test-deploy:
     jobs:
-      - swift-package:
-          filters:
-            tags:
-              only: /.*/
+      # - swift-package:
+      # filters:
+      # tags:
+      # only: /.*/
       - tests-xcode-16:
           filters:
             tags:
@@ -143,7 +143,7 @@ workflows:
       - deploy-to-cocoapods:
           context: CocoaPods
           requires:
-            - swift-package
+            # - swift-package
             - tests-xcode-16
             - tests-xcode-15
             - lint-pod

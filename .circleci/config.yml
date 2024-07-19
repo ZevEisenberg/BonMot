@@ -13,8 +13,6 @@ jobs:
       - run: swift test
       - store_test_results:
           path: test-results-swift
-      - store_artifacts:
-          path: /tmp/artifacts
 
   lint-pod:
     executor: xcode-16
@@ -44,8 +42,6 @@ jobs:
       - run: make test_watchos
       - store_test_results:
           path: test-results-watchos
-      - store_artifacts:
-          path: /tmp/artifacts
 
   tests-xcode-15:
     executor: xcode-15
@@ -68,8 +64,6 @@ jobs:
       - run: make test_watchos
       - store_test_results:
           path: test-results-watchos
-      - store_artifacts:
-          path: /tmp/artifacts
 
   deploy-to-cocoapods:
     executor: xcode-15

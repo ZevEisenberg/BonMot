@@ -5,7 +5,7 @@ orbs:
 
 jobs:
   swift-package:
-    executor: xcode-14
+    executor: xcode-16
     steps:
       - setup
       - run: mkdir test-results-swift
@@ -15,15 +15,15 @@ jobs:
           path: test-results-swift
 
   lint-pod:
-    executor: xcode-14
+    executor: xcode-16
     steps:
       - setup
       - lint-pod
 
-# Docs for store_test_results: https://circleci.com/docs/configuration-reference/#storetestresults
+  # Docs for store_test_results: https://circleci.com/docs/configuration-reference/#storetestresults
 
-  tests-xcode-14:
-    executor: xcode-14
+  tests-xcode-16:
+    executor: xcode-16
     steps:
       - setup
       - run: mkdir test-results-macos
@@ -72,9 +72,9 @@ jobs:
       - run: bundle exec pod trunk push
 
 executors:
-  xcode-14:
+  xcode-16:
     macos:
-      xcode: "14.3.1"
+      xcode: "16.0.0"
     resource_class: macos.m1.large.gen1
     environment:
       LC_ALL: en_US.UTF-8
@@ -83,7 +83,7 @@ executors:
     shell: /bin/bash --login -eo pipefail
   xcode-15:
     macos:
-      xcode: "15.1.0"
+      xcode: "15.4.0"
     resource_class: macos.m1.large.gen1
     environment:
       LC_ALL: en_US.UTF-8
@@ -122,7 +122,7 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - tests-xcode-14:
+      - tests-xcode-16:
           filters:
             tags:
               only: /.*/
@@ -138,7 +138,7 @@ workflows:
           context: CocoaPods
           requires:
             - swift-package
-            - tests-xcode-14
+            - tests-xcode-16
             - tests-xcode-15
             - lint-pod
           filters:

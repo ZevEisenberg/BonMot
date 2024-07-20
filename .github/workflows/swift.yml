@@ -16,6 +16,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - uses: maxim-lobanov/setup-xcode@v1
+      with:
+        xcode-version: 15.4
     - name: Bundle
       run: bundle install
     - name: Build

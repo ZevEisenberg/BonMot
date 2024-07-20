@@ -5,6 +5,7 @@ test_ios:
 
 test_macos:
 	set -o pipefail && xcodebuild test -scheme BonMot -destination platform=macOS,arch=arm64 | bundle exec xcpretty --report junit --output test-results-macos/report.xml
+	ls -la
 
 test_tvos:
 	set -o pipefail && xcodebuild test -scheme BonMot -destination "platform=tvOS Simulator,name=Apple TV" | bundle exec xcpretty --report junit --output test-results-tvos/report.xml

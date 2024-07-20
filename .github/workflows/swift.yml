@@ -5,25 +5,22 @@ name: Swift
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
   pull_request:
-    branches: [ "master" ]
+    branches: ["master"]
 
 jobs:
   build:
-
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: 15.4
-    - name: Bundle
-      run: bundle install
-    - name: Build
-      run: swift build -v
-    - name: Run tests
-      run: swift test -v | bundle exec xcpretty
-    - name: Run all tests
-      run: make test_all
+      - uses: actions/checkout@v4
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 15.4
+      - name: Bundle
+        run: bundle install
+      - name: Run tests
+        run: SNAPSHOT_ARTIFACTS="./artifacts" swift test -v | bundle exec xcpretty
+      - name: Run all tests
+        run: make test_all

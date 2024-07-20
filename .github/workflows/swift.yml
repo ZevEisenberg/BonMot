@@ -24,3 +24,6 @@ jobs:
         run: SNAPSHOT_ARTIFACTS="./artifacts" swift test -v | bundle exec xcpretty
       - name: Run all tests
         run: make test_all
+      - name: list files
+        if: ${{ failure() }}
+        run: ls -la

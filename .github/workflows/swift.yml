@@ -25,3 +25,5 @@ jobs:
       run: swift build -v
     - name: Run tests
       run: swift test -v | bundle exec xcpretty
+    - name: Run all tests
+      run: make test_all

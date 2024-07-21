@@ -85,7 +85,6 @@ GEM
     nkf (0.2.0)
     public_suffix (4.0.7)
     rexml (3.2.6)
-    rouge (2.0.7)
     ruby-macho (2.5.1)
     typhoeus (1.4.1)
       ethon (>= 0.9.0)
@@ -98,15 +97,12 @@ GEM
       colored2 (~> 3.1)
       nanaimo (~> 0.3.0)
       rexml (~> 3.2.4)
-    xcpretty (0.3.0)
-      rouge (~> 2.0.7)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   cocoapods
-  xcpretty
 
 BUNDLED WITH
    2.5.3

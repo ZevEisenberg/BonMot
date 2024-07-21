@@ -7,9 +7,9 @@
 //
 // NOTE: Keep attributes in order to help reviewability.
 
-#if os(OSX)
+#if canImport(AppKit)
     import AppKit
-#else
+#elseif canImport(UIKit)
     import UIKit
 #endif
 

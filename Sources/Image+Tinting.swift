@@ -6,17 +6,19 @@
 //  Copyright © 2016 Rightpoint. All rights reserved.
 //
 
+#if !os(watchOS)
+
 import Foundation
 
-#if os(OSX)
+#if canImport(AppKit)
     import AppKit
-#else
+#elseif canImport(UIKit)
     import UIKit
 #endif
 
 public extension BONImage {
 
-    #if os(OSX)
+    #if canImport(AppKit)
     /// Returns a copy of the receiver where the alpha channel is maintained,
     /// but every pixel's color is replaced with `color`.
     ///
@@ -26,40 +28,18 @@ public extension BONImage {
     /// - Parameter theColor: The color to use to tint the receiver.
     /// - Returns: A tinted copy of the image.
     @objc(bon_tintedImageWithColor:)
-    func tintedImage(color theColor: BONColor) -> BONImage {
-        let imageRect = CGRect(origin: .zero, size: size)
-
-        let image = NSImage(size: size)
-
-        let rep = NSBitmapImageRep(
-            bitmapDataPlanes: nil,
-            pixelsWide: Int(size.width),
-            pixelsHigh: Int(size.height),
-            bitsPerSample: 8,
-            samplesPerPixel: 4,
-            hasAlpha: true,
-            isPlanar: false,
-            colorSpaceName: theColor.colorSpaceName,
-            bytesPerRow: 0,
-            bitsPerPixel: 0
-            )!
-
-        image.addRepresentation(rep)
-
-        image.lockFocus()
-
-        let context = NSGraphicsContext.current!.cgContext
-
-        context.setBlendMode(.normal)
-        let cgImage = self.cgImage(forProposedRect: nil, context: nil, hints: nil)!
-        context.draw(cgImage, in: imageRect)
-
-        // .sourceIn: resulting color = source color * destination alpha
-        context.setBlendMode(.sourceIn)
-        context.setFillColor(theColor.cgColor)
-        context.fill(imageRect)
-
-        image.unlockFocus()
+    func tintedImage(color: BONColor) -> BONImage {
+        let image = NSImage(size: size, flipped: false) { rect in
+            color.set()
+            rect.fill()
+            self.draw(
+                in: rect,
+                from: NSRect(origin: .zero, size: self.size),
+                operation: .destinationIn,
+                fraction: 1
+            )
+            return true
+        }
 
         // Prevent further tinting
         image.isTemplate = false
@@ -69,7 +49,7 @@ public extension BONImage {
 
         return image
     }
-    #else
+    #elseif canImport(UIKit)
     /// Returns a copy of the receiver where the alpha channel is maintained,
     /// but every pixel's color is replaced with `color`.
     ///
@@ -79,33 +59,20 @@ public extension BONImage {
     /// - Parameter theColor: The color to use to tint the receiver.
     /// - Returns: A tinted copy of the image.
     @objc(bon_tintedImageWithColor:)
-    func tintedImage(color theColor: BONColor) -> BONImage {
+    func tintedImage(color: BONColor) -> BONImage {
         let imageRect = CGRect(origin: .zero, size: size)
         // Save original properties
         let originalCapInsets = capInsets
         let originalResizingMode = resizingMode
         let originalAlignmentRectInsets = alignmentRectInsets
 
-        UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        let context = UIGraphicsGetCurrentContext()!
+        let format = UIGraphicsImageRendererFormat(for: UITraitCollection(displayScale: scale))
 
-        // Flip the context vertically
-        context.translateBy(x: 0.0, y: size.height)
-        context.scaleBy(x: 1.0, y: -1.0)
-
-        // Image tinting mostly inspired by http://stackoverflow.com/a/22528426/255489
-
-        context.setBlendMode(.normal)
-        context.draw(cgImage!, in: imageRect)
-
-        // .sourceIn: resulting color = source color * destination alpha
-        context.setBlendMode(.sourceIn)
-        context.setFillColor(theColor.cgColor)
-        context.fill(imageRect)
-
-        // Get new image
-        var image = UIGraphicsGetImageFromCurrentImageContext()!
-        UIGraphicsEndImageContext()
+        var image = UIGraphicsImageRenderer(size: size, format: format).image { rendererContext in
+            color.setFill()
+            UIRectFill(imageRect)
+            self.draw(at: .zero, blendMode: .destinationIn, alpha: 1)
+        }
 
         // Prevent further tinting
         image = image.withRenderingMode(.alwaysOriginal)
@@ -126,3 +93,4 @@ public extension BONImage {
     #endif
 
 }
+#endif

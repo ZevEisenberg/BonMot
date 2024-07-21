@@ -9,6 +9,7 @@
 @testable import BonMot
 import XCTest
 
+#if !os(watchOS)
 class FontInspectorTests: XCTestCase {
 
     let systemFont = BONFont.systemFont(ofSize: 24)
@@ -123,3 +124,4 @@ class FontInspectorTests: XCTestCase {
         XCTAssertEqual(garamond.availableFontFeatures(includeIdentifiers: false), garamondControlString)
     }
 }
+#endif

@@ -18,21 +18,25 @@ import AppKit
 #if canImport(UIKit) || canImport(AppKit)
 
 class ComposableTests: XCTestCase {
+    #if !os(watchOS)
     func robotImage() throws -> BONImage {
-        #if os(OSX)
+        #if canImport(AppKit)
         let imageForTest = testBundle.image(forResource: "robot")
-        #else
+        #elseif canImport(UIKit)
         let imageForTest = UIImage(named: "robot", in: testBundle, compatibleWith: nil)
         #endif
         return try XCTUnwrap(imageForTest)
     }
+    #endif
 
+    #if !os(watchOS)
     func testImageConstructor() throws {
         let imageForTest = try robotImage()
         let imageString = imageForTest.attributedString()
         let string = "\(Special.objectReplacementCharacter)"
         XCTAssertEqual(imageString.string, string)
     }
+    #endif
 
     func testBasicJoin() {
         let string = NSAttributedString.composed(of: ["A", "B", "C"], separator: NSAttributedString(string: "-"))
@@ -44,6 +48,7 @@ class ComposableTests: XCTestCase {
       XCTAssertEqual("A-B-C", string.string)
     }
 
+    #if !os(watchOS)
     func testAttributesArePassedAlongExtend() throws {
         let imageForTest = try robotImage()
 
@@ -105,6 +110,7 @@ class ComposableTests: XCTestCase {
             XCTAssertEqual(expectedWidth, width, accuracy: 1.0, line: line)
         }
     }
+    #endif
 
     func testBaseStyleIsOverridden() {
         func check<T: Equatable>(forPart thePart: StringStyle.Part, _ attribute: NSAttributedString.Key, _ expected: T, line: UInt = #line) {

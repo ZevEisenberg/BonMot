@@ -8,13 +8,11 @@
 
 #if !os(watchOS)
 
-#if os(OSX)
+#if canImport(AppKit)
     import AppKit
-#else
+#elseif canImport(UIKit)
     import UIKit
 #endif
-
-private var TextAlignmentConstraintKVOContext = "BonMotTextAlignmentConstraintKVOContext" as NSString
 
 /// Used to align various UI controls (anything with a font or attribute text)
 /// by properties that are not available with stock constraints:
@@ -97,10 +95,12 @@ public class TextAlignmentConstraint: NSLayoutConstraint {
     private var item1: AnyObject!
     private var item2: AnyObject!
 
+    private static var kvoContext = 0
+
     // The class part of these selectors are ignored; it is there simply to satisfy Xcode's selector syntax.
     private static let fontSelector = #selector(getter: BONTextField.font)
 
-    #if os(OSX)
+    #if canImport(AppKit)
         private static let attributedTextSelector = #selector(getter: NSTextField.attributedStringValue)
     #else
         private static let attributedTextSelector = #selector(getter: UITextField.attributedText)
@@ -150,13 +150,13 @@ public class TextAlignmentConstraint: NSLayoutConstraint {
 
     private func setupObservers() {
         for keyPath in fontKeyPaths {
-            addObserver(self, forKeyPath: keyPath, options: [], context: &TextAlignmentConstraintKVOContext)
+            addObserver(self, forKeyPath: keyPath, options: [], context: &Self.kvoContext)
         }
     }
 
     private func tearDownObservers() {
         for keyPath in fontKeyPaths {
-            removeObserver(self, forKeyPath: keyPath, context: &TextAlignmentConstraintKVOContext)
+            removeObserver(self, forKeyPath: keyPath, context: &Self.kvoContext)
         }
     }
 
@@ -175,7 +175,7 @@ public class TextAlignmentConstraint: NSLayoutConstraint {
     // Can't use block-based KVO until we can use \NSLayoutConstraint.firstItem
     // swiftlint:disable:next block_based_kvo
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey: Any]?, context: UnsafeMutableRawPointer?) {
-        guard context == &TextAlignmentConstraintKVOContext else {
+        guard context == &Self.kvoContext else {
             super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
             return
         }
@@ -184,12 +184,7 @@ public class TextAlignmentConstraint: NSLayoutConstraint {
     }
 
     private func updateConstant() {
-        #if os(OSX)
-            let distanceFromTop1 = distanceFromTop(of: firstItem!, with: firstItemAttribute)
-        #else
-            let distanceFromTop1 = distanceFromTop(of: firstItem!, with: firstItemAttribute)
-        #endif
-
+        let distanceFromTop1 = distanceFromTop(of: firstItem!, with: firstItemAttribute)
         let distanceFromTop2 = distanceFromTop(of: secondItem!, with: secondItemAttribute)
         let difference = distanceFromTop2 - distanceFromTop1
         constant = difference

@@ -8,18 +8,21 @@
 
 import BonMot
 
-#if os(OSX)
+#if canImport(AppKit)
     import AppKit
     let BONFontDescriptorFeatureSettingsAttribute = NSFontDescriptor.AttributeName.featureSettings
     let BONFontFeatureTypeIdentifierKey = NSFontDescriptor.FeatureKey.typeIdentifier
     let BONFontFeatureSelectorIdentifierKey = NSFontDescriptor.FeatureKey.selectorIdentifier
     typealias BONView = NSView
-#else
+#elseif canImport(UIKit)
     import UIKit
     let BONFontDescriptorFeatureSettingsAttribute = UIFontDescriptor.AttributeName.featureSettings
     let BONFontFeatureTypeIdentifierKey = UIFontDescriptor.FeatureKey.featureIdentifier
     let BONFontFeatureSelectorIdentifierKey = UIFontDescriptor.FeatureKey.typeIdentifier
-    typealias BONView = UIView
+#endif
+
+#if os(iOS)
+typealias BONView = UIView
 #endif
 
 extension NSAttributedString.Key: ExpressibleByStringLiteral {

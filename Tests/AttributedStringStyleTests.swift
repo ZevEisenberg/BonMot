@@ -217,6 +217,8 @@ class StringStyleTests: XCTestCase {
         checkKerningValues(customRangesToValues, startingOnLine: customRangesToValuesLine, in: customStyled)
     }
 
+    #if !os(watchOS)
+
     func testNumberSpacingStyle() {
         let style = StringStyle(.font(BONFont(name: "EBGaramond12-Regular", size: 24)!), .numberSpacing(.monospaced))
         for (style, fullStyle) in additivePermutations(for: style) {
@@ -552,6 +554,8 @@ class StringStyleTests: XCTestCase {
         }
         XCTAssertFalse(stillHasAltSixDict)
     }
+
+    #endif
 
     func testStyleBlockRules() throws {
         let string = #"0<one attr1="11">1<two attr2="12">2</two></one>"#

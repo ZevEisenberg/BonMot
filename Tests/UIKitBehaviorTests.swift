@@ -16,7 +16,7 @@ let defaultTextFieldFontSize: CGFloat = 38
 let defaultTextViewFontSize: CGFloat = 38
 #endif
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 import UIKit
 
 class UIKitBehaviorTests: XCTestCase {
@@ -94,8 +94,7 @@ class UIKitBehaviorTests: XCTestCase {
         #endif
         textField.text = "Testing"
         // By default the font is nil
-        XCTAssertNotNil(textField.font)
-        XCTAssertEqual(textField.font?.pointSize, defaultTextViewFontSize)
+        XCTAssertNil(textField.font)
 
         textField.font = largeFont
         XCTAssertEqual(textField.font?.pointSize, 20)

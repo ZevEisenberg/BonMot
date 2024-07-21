@@ -8,15 +8,16 @@
 
 import Foundation
 
-#if os(OSX)
+#if canImport(AppKit)
     import AppKit
-#else
+#elseif canImport(UIKit)
     import UIKit
 #endif
 
 @testable import BonMot
 import XCTest
 
+#if !os(watchOS)
 class TextAlignmentConstraintTests: XCTestCase {
 
     private func field(withText text: String, fontSize: CGFloat) -> BONTextField {
@@ -25,9 +26,9 @@ class TextAlignmentConstraintTests: XCTestCase {
 
         field.font = BONFont(name: "Avenir-Roman", size: fontSize)
 
-        #if os(OSX)
+        #if canImport(AppKit)
             field.stringValue = text
-        #else
+        #elseif canImport(UIKit)
             field.text = text
         #endif
 
@@ -186,3 +187,4 @@ class TextAlignmentConstraintTests: XCTestCase {
     }
 
 }
+#endif

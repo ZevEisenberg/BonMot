@@ -15,7 +15,7 @@ public enum Ligatures: Int {
     /// Default ligatures.
     case defaults = 1
 
-    #if os(OSX)
+    #if canImport(AppKit)
     /// All ligatures.
     case all = 2
     #endif

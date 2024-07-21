@@ -13,8 +13,7 @@ import XCTest
 // Override Foundation's StringStyle from iOS 15+, macOS 12+, tvOS 15+, watchOS 8+.
 typealias StringStyle = BonMot.StringStyle
 
-#if os(OSX)
-#else
+#if os(iOS) || os(tvOS)
     import UIKit
     let titleTextStyle = UIFont.TextStyle.title1
     let differentTextStyle = UIFont.TextStyle.title2
@@ -81,8 +80,7 @@ let styleB = StringStyle(
     .tailIndent(10)
 )
 
-#if os(OSX)
-#else
+#if os(iOS) || os(tvOS)
 let adaptiveStyle = StringStyle(
     .font(.fontA),
     .color(.colorA),
@@ -204,66 +202,32 @@ extension NSAttributedString {
         return attributesByRange
     }
 
-    func snapshotForTesting() -> BONImage? {
+    #if !os(watchOS)
+    func snapshotForTesting() throws -> BONImage {
         let bigSize = CGSize(width: 10_000, height: 10_000)
 
         // Bug: on macOS, attached images are not taken into account
         // when measuring attributed strings: http://www.openradar.me/28639290
-        let rect = boundingRect(with: bigSize, options: .usesLineFragmentOrigin, context: nil)
+        let boundingRect = boundingRect(with: bigSize, options: .usesLineFragmentOrigin, context: nil)
 
-        guard !rect.isEmpty else {
-            return nil
+        guard !boundingRect.isEmpty else {
+            struct ImageBoundingRectEmpty: Error {}
+            throw ImageBoundingRectEmpty()
         }
 
-        #if os(OSX)
-            let image = NSImage(size: rect.size)
-
-            let rep = NSBitmapImageRep(
-                bitmapDataPlanes: nil,
-                pixelsWide: Int(rect.size.width),
-                pixelsHigh: Int(rect.size.height),
-                bitsPerSample: 8,
-                samplesPerPixel: 4,
-                hasAlpha: true,
-                isPlanar: false,
-                colorSpaceName: .deviceRGB,
-                bytesPerRow: 0,
-                bitsPerPixel: 0
-                )!
-
-            image.addRepresentation(rep)
-
-            image.lockFocus()
-
-            draw(with: rect, options: .usesLineFragmentOrigin, context: nil)
-
-            image.unlockFocus()
-            return image
-        #else
-            UIGraphicsBeginImageContextWithOptions(rect.size, false, 0.0)
-            draw(with: rect, options: .usesLineFragmentOrigin, context: nil)
-            let image = UIGraphicsGetImageFromCurrentImageContext()!
-            UIGraphicsEndImageContext()
-            return image
+        #if canImport(AppKit)
+        let image = NSImage(size: boundingRect.size, flipped: false) { rect in
+            self.draw(with: boundingRect, options: .usesLineFragmentOrigin, context: nil)
+            return true
+        }
+        return image
+        #elseif canImport(UIKit)
+        let format = UIGraphicsImageRendererFormat(for: UITraitCollection(displayScale: 1))
+        return UIGraphicsImageRenderer(size: boundingRect.size, format: format).image { _ in
+            self.draw(with: boundingRect, options: .usesLineFragmentOrigin, context: nil)
+        }
         #endif
     }
-
-}
-
-extension BONView {
-
-    func testingSnapshot() -> BONImage {
-        #if os(OSX)
-            let dataOfView = dataWithPDF(inside: bounds)
-            let image = NSImage(data: dataOfView)!
-            return image
-        #else
-            UIGraphicsBeginImageContextWithOptions(bounds.size, isOpaque, 0.0)
-            layer.render(in: UIGraphicsGetCurrentContext()!)
-            let image = UIGraphicsGetImageFromCurrentImageContext()!
-            UIGraphicsEndImageContext()
-            return image
-        #endif
-    }
+    #endif
 
 }

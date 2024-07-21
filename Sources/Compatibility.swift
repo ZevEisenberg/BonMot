@@ -6,17 +6,16 @@
 //  Copyright © 2016 Rightpoint. All rights reserved.
 //
 
-#if os(OSX)
+#if canImport(AppKit)
     import AppKit
-#else
+#elseif canImport(UIKit)
     import UIKit
 #endif
 
 // This file declares extensions to system types to provide a compatible API
 // between Swift iOS, macOS, watchOS, and tvOS.
 
-#if os(OSX)
-#else
+#if !canImport(AppKit)
     public extension NSParagraphStyle {
 
         typealias LineBreakMode = NSLineBreakMode

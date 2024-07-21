@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.10
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,36 +6,40 @@ import PackageDescription
 let package = Package(
     name: "BonMot",
     platforms: [
-        .iOS(.v11),
-        .macOS(.v10_11),
-        .tvOS(.v11),
-        .watchOS(.v2),
+        .iOS(.v12),
+        .macOS(.v10_13),
+        .tvOS(.v12),
+        .watchOS(.v4),
     ],
     products: [
         .library(
             name: "BonMot",
             targets: ["BonMot"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.0.0"),
+    ],
     targets: [
         .target(
             name: "BonMot",
             dependencies: [],
             path: "Sources",
-            exclude: ["Info.plist"]
+            exclude: []
         ),
         .testTarget(
             name: "BonMotTests",
-            dependencies: ["BonMot"],
+            dependencies: [
+                "BonMot",
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+            ],
             path: "Tests",
             exclude: [
-                "Info.plist",
-                "BonMot-iOSTests.xctestplan", // *.xctestplan didn't seem to work
-                "BonMot-OSXTests.xctestplan",
-                "BonMot-tvOSTests.xctestplan",
+                "__Snapshots__",
             ],
             resources: [
-                .process("Resources"),
-        ]),
+                .process("Resources")
+            ]
+        ),
     ],
     swiftLanguageVersions: [.v5]
 )

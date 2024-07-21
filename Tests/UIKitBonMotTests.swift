@@ -9,7 +9,7 @@
 import BonMot
 import XCTest
 
-#if canImport(UIKit)
+#if canImport(UIKit) && !os(watchOS)
 import UIKit
 
 class UIKitBonMotTests: XCTestCase {

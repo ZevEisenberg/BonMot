@@ -1,115 +1,90 @@
 version: 2.1
 
-jobs:
-  danger:
-    executor: xcode-12
-    steps:
-      - setup
-      - run:
-          name: Install xchtmlreport
-          command: |
-            curl -O https://raw.githubusercontent.com/TitouanVanBelle/XCTestHTMLReport/develop/xchtmlreport.rb
-            brew install --HEAD --build-from-source xchtmlreport.rb
-      - run:
-          name: Install xcparse
-          when: always
-          command: |
-            brew install chargepoint/xcparse/xcparse
-      - run:
-          name: Tests & Code Coverage
-          when: always
-          command: |
-            bundle exec fastlane coverage_all
-      # Store xcov Code Coverage HTML report artifact
-      - store_artifacts:
-          path: build/BonMot-iOS/xcov
-          destination: xcov
-      - store_artifacts:
-          path: build/BonMot-iOS/slather
-          destination: slather
-      - store_artifacts:
-          path: build/BonMot-iOS/scan
-          destination: scan
-      - run:
-          name: Rename CircleCI JUnit XML
-          when: always
-          command: |
-            mkdir -p build/test-results/danger
-            cp build/BonMot-iOS/scan/BonMot-iOS.xcresult/report.junit build/test-results/danger/results.xml
-      - store_test_results:
-          path: build/test-results
-      # Install SwiftLint only before Danger because otherwise it fails the build
-      - run:
-          name: Install SwiftLint
-          when: always
-          command: |
-            brew install swiftlint
-      - run:
-          name: Danger
-          when: always
-          command: |
-            if [ -n "$DANGER_GITHUB_API_TOKEN" ]; then bundle exec danger; else echo "Skipping Danger for forked pull request."; fi
-      - run:
-          name: Upload to Codecov
-          when: always
-          command: bash <(curl -s https://codecov.io/bash) -f build/BonMot-iOS/slather/cobertura.xml -X coveragepy -X gcov -X xcode
+orbs:
+  macos: circleci/macos@2
 
+jobs:
   swift-package:
-    executor: xcode-12
+    executor: xcode-16
     steps:
       - setup
+      - run: mkdir test-results-swift
       - run: swift build
       - run: swift test
+      - store_test_results:
+          path: test-results-swift
 
   lint-pod:
-    executor: xcode-12
+    executor: xcode-16
     steps:
       - setup
       - lint-pod
 
-  fastlane-tests:
-    executor: xcode-12
+  # Docs for store_test_results: https://circleci.com/docs/configuration-reference/#storetestresults
+
+  tests-xcode-16:
+    executor: xcode-16
     steps:
       - setup
-      - run: bundle exec fastlane test_all
+      - run: mkdir test-results-macos
+      - run: make test_macos
+      - store_test_results:
+          path: test-results-macos
+      - run: mkdir test-results-ios
+      - run: make test_ios
+      - store_test_results:
+          path: test-results-ios
+      - run: mkdir test-results-tvos
+      - run: make test_tvos
+      - store_test_results:
+          path: test-results-tvos
+      - run: mkdir test-results-watchos
+      - run: make test_watchos
+      - store_test_results:
+          path: test-results-watchos
 
-  fastlane-tests-xcode-13:
-    executor: xcode-13
+  tests-xcode-15:
+    executor: xcode-15
     steps:
       - setup
-      - run: bundle exec fastlane test_all
-
-  carthage-build:
-    executor: xcode-12
-    steps:
-      - checkout
-      - run:
-          name: Update homebrew dependencies
-          command: brew update 1> /dev/null 2> /dev/null
-      - run:
-          name: Update Carthage
-          command: brew outdated carthage || (brew uninstall carthage --force; brew install carthage --force-bottle)
-      # Carthage does not work on Xcode 12 https://github.com/Carthage/Carthage/issues/3019
-      # - run: carthage build --no-skip-current && for platform in Mac iOS tvOS watchOS; do test -d Carthage/Build/${platform}/BonMot.framework || exit 1; done
+      - run: mkdir test-results-macos
+      - run: make test_macos
+      - run: mkdir test-results-macos
+      - store_test_results:
+          path: test-results-macos
+      - run: mkdir test-results-ios
+      - run: make test_ios
+      - store_test_results:
+          path: test-results-ios
+      - run: mkdir test-results-tvos
+      - run: make test_tvos
+      - store_test_results:
+          path: test-results-tvos
+      - run: mkdir test-results-watchos
+      - run: make test_watchos
+      - store_test_results:
+          path: test-results-watchos
 
   deploy-to-cocoapods:
-    executor: xcode-12
+    executor: xcode-15
     steps:
       - setup
       - run: bundle exec pod trunk push
 
 executors:
-  xcode-12:
+  xcode-16:
     macos:
-      xcode: "12.5.1"
+      xcode: "16.0.0"
+    resource_class: macos.m1.large.gen1
     environment:
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
       HOMEBREW_NO_AUTO_UPDATE: 1
     shell: /bin/bash --login -eo pipefail
-  xcode-13:
+  xcode-15:
     macos:
-      xcode: "13.0.0"
+      xcode: "15.4.0"
+    resource_class: macos.m1.large.gen1
     environment:
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
@@ -121,28 +96,21 @@ commands:
     description: "Shared setup"
     steps:
       - checkout
-      - restore-gems
+      - switch-ruby
 
-  restore-gems:
-    description: "Restore Ruby Gems"
+  switch-ruby:
+    description: "Switch Ruby"
     steps:
-      - run:
-          name: Set Ruby Version
-          command:  echo "ruby-2.5" > ~/.ruby-version
-      - restore_cache:
-          key: 1-gems-{{ checksum "Gemfile.lock" }}
-      - run: bundle check || bundle install --path vendor/bundle
-      - save_cache:
-          key: 1-gems-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
+      - macos/switch-ruby:
+          version: "3.1.4" # must match version in .ruby-version
+      - run: bundle install
 
   lint-pod:
     description: "Lints podspec with specified Swift version"
     parameters:
       swift-version:
         type: string
-        default: "5.0"
+        default: "5.8"
     steps:
       - run: bundle exec pod lib lint --swift-version=<< parameters.swift-version >>
 
@@ -150,19 +118,15 @@ workflows:
   version: 2
   build-test-deploy:
     jobs:
-      - danger:
+      # - swift-package:
+      # filters:
+      # tags:
+      # only: /.*/
+      - tests-xcode-16:
           filters:
             tags:
               only: /.*/
-      - swift-package:
-          filters:
-            tags:
-              only: /.*/
-      - fastlane-tests:
-          filters:
-            tags:
-              only: /.*/
-      - fastlane-tests-xcode-13:
+      - tests-xcode-15:
           filters:
             tags:
               only: /.*/
@@ -170,19 +134,13 @@ workflows:
           filters:
             tags:
               only: /.*/
-      - carthage-build:
-          filters:
-            tags:
-              only: /.*/
       - deploy-to-cocoapods:
           context: CocoaPods
           requires:
-            - danger
-            - swift-package
-            - fastlane-tests
-            - fastlane-tests-xcode-13
+            # - swift-package
+            - tests-xcode-16
+            - tests-xcode-15
             - lint-pod
-            - carthage-build
           filters:
             tags:
               only: /\d+(\.\d+)*(-.*)*/

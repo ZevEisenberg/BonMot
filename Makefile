@@ -10,16 +10,16 @@ define xcbeautify
 endef
 
 test_ios:
-	set -o pipefail && xcodebuild test -scheme BonMot -destination "platform=iOS Simulator,name=iPhone 15" -resultBundlePath test-results-ios/Bonmot-iOS.xcresult | $(call xcbeautify)
+	xcodebuild test -scheme BonMot -destination "platform=iOS Simulator,name=iPhone 15" -resultBundlePath test-results-ios/Bonmot-iOS.xcresult | $(call xcbeautify)
 
 test_macos:
-	set -o pipefail && xcodebuild test -scheme BonMot -destination "platform=macOS,arch=arm64" -resultBundlePath test-results-macos/Bonmot-macOS.xcresult | $(call xcbeautify)
+	xcodebuild test -scheme BonMot -destination "platform=macOS,arch=arm64" -resultBundlePath test-results-macos/Bonmot-macOS.xcresult | $(call xcbeautify)
 
 test_tvos:
-	set -o pipefail && xcodebuild test -scheme BonMot -destination "platform=tvOS Simulator,name=Apple TV" -resultBundlePath test-results-tvos/Bonmot-tvOS.xcresult | $(call xcbeautify)
+	xcodebuild test -scheme BonMot -destination "platform=tvOS Simulator,name=Apple TV" -resultBundlePath test-results-tvos/Bonmot-tvOS.xcresult | $(call xcbeautify)
 
 test_watchos:
-	set -o pipefail && xcodebuild test -scheme BonMot -destination "platform=watchOS Simulator,name=Apple Watch Series 9 (45mm)" -resultBundlePath test-results-watchos/Bonmot-watchOS.xcresult | $(call xcbeautify)
+	xcodebuild test -scheme BonMot -destination "platform=watchOS Simulator,name=Apple Watch Series 9 (45mm)" -resultBundlePath test-results-watchos/Bonmot-watchOS.xcresult | $(call xcbeautify)
 
 clean_if_required:
 	rm -rf test-results-macos test-results-ios test-results-watchos test-results-tvos

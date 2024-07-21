@@ -1,4 +1,7 @@
 # Use `set -o pipefail &&` to make xcpretty exit with the same code as xcodebuild.
+# Use bash with pipefail option for all jobs
+SHELL := /bin/zsh
+.SHELLFLAGS := -o pipefail -c
 
 # Define xcbeautify
 define xcbeautify
